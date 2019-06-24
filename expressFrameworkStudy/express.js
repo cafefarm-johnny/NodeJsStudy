@@ -1,10 +1,12 @@
-// express 모듈을 불러와 객체를 app상수에 초기화한다.
-const express = require('express');
+const express = require('express'); // express 모듈을 불러와 객체를 app상수에 초기화한다.
 const path = require('path');
+const bodyParser = require('body-parser'); // request 객체의 body 속성을 정의하기 위해 body-parser 모듈을 초기화한다.
 const app = express();
 
 app.use(express.static('sources')); // 정적 파일이 위치할 디렉토리를 지정하는 기능
 app.use(require('connect-history-api-fallback')()); // VueJs와 연동하는 모듈 사용 설정
+app.use(bodyParser.urlencoded({ extended: false })); // application/x-www-form-urlencoded 파싱 정의 설정
+app.use(bodyParser.json()); // application/json 파싱 정의 설정
 
 // GET방식으로 localhost:3000/ URL로 들어오는 경우 익명함수를 연결한다.
 // 요청이 들어오면 sources 폴더의 index.html를 반환한다.
