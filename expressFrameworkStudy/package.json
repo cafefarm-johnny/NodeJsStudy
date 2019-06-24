@@ -1,0 +1,14 @@
+{
+  "name": "expressframeworkstudy",
+  "version": "1.0.0",
+  "description": "express 프레임워크 복습",
+  "main": "express.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Johnny",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
