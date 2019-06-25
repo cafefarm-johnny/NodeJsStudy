@@ -26,5 +26,11 @@ module.exports = () => {
     app.set('view engine', 'pug'); // view Template engine 설정
 
     require('../app/routes/indexRouter')(app); // indexRouter로 app을 리턴
+
+    // 정적 파일 설정이 라우팅 파일 호출 전에 있을 경우, 
+    // express는 HTTP 요청 경로를 찾기 위해 정적 폴더를 먼저 찾게 된다.
+    // 이는 애플리케이션의 응답 속도를 느리게 만드는 문제로 이어지기 때문에
+    // 반드시 라우팅 호출 밑에 작성하자.
+    app.use(express.static('./public')); // 정적 파일 경로 설정
     return app;
 }
