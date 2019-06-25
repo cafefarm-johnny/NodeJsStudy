@@ -2,13 +2,31 @@ const mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    username : String, 
+    username : { 
+        type : String, 
+        trim : true, // trim 작동 설정 (데이터 insert 전 trim처리를 한다.)
+        unique : true, // RDBMS의 primary key 옵션과 비슷한 기능을 한다. 이는 모델에 색인기능을 추가하는 옵션이다.
+        required : true // 데이터 유무 검증 옵션이다. (데이터 insert 전 검증을 수행한다.)
+    },
     userid : {
         type : String,
         trim : true 
     }, 
-    password : String, 
-    email : String, 
+    password : { 
+        type : String, 
+        required : true, 
+        validate : [ // 콜백함수를 이용한 검증 방법이다.
+            (password) => { // 입력받은 값을 인자로 받는다.
+                return password.length >= 8;
+            }, 
+            'Please password should be 8 more then longer.' // 콜백함수의 return이 false인 경우 메시지가 전달된다.
+        ]
+    }, 
+    email : { 
+        type : String, 
+        index : true, // 보조 색인 기능인 index를 설정한다.
+        match : /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/ // 정규식 표현을 이용하여 특정 문자와 형식에 관련된 검증을 수행한다. (email 패턴의 데이터가 아닐 경우 저장을 중단한다.)
+    }, 
     created : {
         type : Date, 
         default : Date.now
@@ -46,6 +64,10 @@ const userSchema = new Schema({
                 return url;
             }
         }
+    }, 
+    role : {
+        type : String, 
+        enum : ['Admin', 'User'] // enum 타입으로 열거형 검증한다. 이 외에 데이터가 들어오는 경우 저장하지 않는다.
     }
 });
 
