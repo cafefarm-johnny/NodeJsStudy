@@ -5,6 +5,8 @@ const morgan = require('morgan'); // 로거 미들웨어 모듈 로드
 const compress = require('compression'); // 응답(response) 압축 지원 모듈 로드
 const bodyParser = require('body-parser'); // 요청(request) 데이터(body) 처리 모듈 로드
 const methodOverride = require('method-override'); // DELETE, PUT HTTP 동사 지원 모듈 로드
+const config = require('./config'); // 내가 작성한 설정 모듈 파일 로드
+const session = require('express-session'); // session을 사용하기 위한 모듈 로드
 
 module.exports = () => {
     const app = express();
@@ -21,6 +23,12 @@ module.exports = () => {
     app.use(bodyParser.urlencoded({ extended: true })); // FormData 데이터 형식 처리 지원 설정
     app.use(bodyParser.json()); // JSON 데이터 형식 처리 지원 설정
     app.use(methodOverride()); // HTTP 동사 지원 설정
+
+    app.use(session({
+        saveUninitialized : true, // 초기화되지 않은 세션정보도 저장할 것인지 옵션 (default: true)
+        resave : true, // 중복된 세션 정보를 다시 저장할 것인지 옵션 (default: true)
+        secret : config.sessionSecret // development.js에서 작성한 커스텀 비밀 키 설정
+    }));
 
     app.set('views', './app/views'); // view 디렉토리 설정
     app.set('view engine', 'pug'); // view Template engine 설정
