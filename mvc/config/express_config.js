@@ -7,6 +7,8 @@ const bodyParser = require('body-parser'); // 요청(request) 데이터(body) �
 const methodOverride = require('method-override'); // DELETE, PUT HTTP 동사 지원 모듈 로드
 const config = require('./config'); // 내가 작성한 설정 모듈 파일 로드
 const session = require('express-session'); // session을 사용하기 위한 모듈 로드
+const passport = require('passport'); // passport를 사용하기 위한 모듈 로드
+const flash = require('connect-flash'); // 임시 메시지를 사용하기 위한 모듈 로드
 
 module.exports = () => {
     const app = express();
@@ -32,6 +34,10 @@ module.exports = () => {
 
     app.set('views', './app/views'); // view 디렉토리 설정
     app.set('view engine', 'pug'); // view Template engine 설정
+
+    app.use(flash()); // flash() 사용 설정 - 사용자 세션 영역에 flash라는 영역을 생성한다.
+    app.use(passport.initialize()); // passport 초기화
+    app.use(passport.session()); // passport 세션 생성
 
     require('../app/routes/indexRouter')(app); // indexRouter로 app을 리턴
     require('../app/routes/userRouter')(app); // userRouter로 app을 리턴

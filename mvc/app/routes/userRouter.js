@@ -1,7 +1,22 @@
 /* 사용자 기능 관련 라우터 */
 const users = require('../../app/controllers/userController');
+const passport = require('passport');
 
 module.exports = (app) => {
+
+    app.route('/signup')
+        .get(users.renderSignup)
+        .post(users.signup);
+
+    app.route('/signin')
+        .get(users.renderSignin)
+        .post(passport.authenticate('local', { successRedirect : '/', failureRedirect : '/signin', failureMessage : true }));
+        // ('인증전략', '옵션' : { successRedirect : '성공 시 리다이렉트', failureRedirect : '실패 시 리다이렉트', failureFlash : 'flash 메시지 사용 여부' })
+
+    app.route('/signout')
+        .get(users.signout);
+    
+    /* mongoDB 테스트 라우트 */
     app.route('/users')
         .post(users.create) // /users로 POST 요청이 들어오면 users.create을 연결한다.
         .get(users.list); // /users로 GET 요청이 들어오면 users.list를 연결한다.

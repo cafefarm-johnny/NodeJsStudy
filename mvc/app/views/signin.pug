@@ -1,0 +1,16 @@
+doctype html
+html 
+    head
+        title
+    body
+        each item in messages 
+            div(class='flash')= item
+        form(action='signin' method='post')
+            div
+                label UserID : 
+                input(type='text' name='username')
+            div
+                label Password :
+                input(type='password' name='password')
+            div
+                input(type='submit' value='Login')

@@ -1,6 +1,109 @@
 /* 사용자 기능 관련 컨트롤러 */
 const User = require('mongoose').model('User'); // mongoose 모듈을 사용해 정의한 User 모델을 불러온다.
+const passport = require('passport'); // passport 모듈을 불러온다.
 
+const errorMessage = (err) => { // mongoose error 객체에서 통합된 오류 메시지를 반환하는 비공개 메소드
+    let message = '';
+
+    if (err.code) // mongoDB에서 에러코드를 반환하는 경우
+    {
+        switch (err.code) 
+        {
+            case 11000 : 
+            case 11001 : 
+                message = 'UserID already exists';
+                break;
+            default : 
+                message = 'Something went Wrong';
+                break;
+        }
+    }
+    else // 내가 직접 만든 mongoose 검증 오류
+    {
+        for (let errName in err.errors) {
+            if (err.errors[errName].message)
+            {
+                message = err.errors[errName].message;
+            }
+        }
+    }
+
+    return message;
+}
+
+exports.renderSignin = (req, res, next) => { // 로그인 폼 렌더링 컨트롤러 메소드
+    if (!req.user) 
+    {
+        res.render('signin', { title : 'Sign-in Form', messages : req.flash('error') || req.flash('info') });
+    }
+    else
+    {
+        return res.redirect('/');
+    }
+}
+
+exports.renderSignup = (req, res, next) => { // 회원가입 폼 렌더링 컨트롤러 메소드
+    if (!req.user)
+    {
+        res.render('signup', { title : 'Sign-up Form', messages : req.flash('error') });
+    }
+    else
+    {
+        return res.redirect('/');
+    }
+}
+
+exports.signup = (req, res, next) => { // 회원가입 컨트롤러 메소드
+    if (!req.user) 
+    {
+        console.log('userController :: signup() :: req.body : ' + req.body);
+        const user = new User(req.body);
+        let message = null;
+
+        user.provider = 'local';
+
+        user.save((err) => { // 사용자 정보 저장
+            console.log('userController :: signup() :: start new user information save method.');
+            if (err)
+            {
+                console.error('userController :: signup() :: errorCode : ' + err);
+                message = errorMessage(err);
+                console.error('userController :: signup() :: errorMessage : ' + message);
+                req.flash('error', message);
+                return res.redirect('/signup');
+            }
+            req.login(user, (err) => { // passport가 정의한 req 객체의 login() 메소드
+                if (err) 
+                {
+                    return next(err);
+                }
+
+                console.log('userController :: signup() :: login user : ' + user);
+                return res.redirect('/');
+            });
+        });
+    }
+    else
+    {
+        return res.redirect('/');
+    }
+}
+
+exports.signout = (req, res) => { // 로그아웃 컨트롤러 메소드
+    req.logout(); // passport가 정의한 req객체의 logout() 메소드
+    res.redirect('/');
+}
+
+
+
+
+
+
+
+
+
+
+/* mongoose를 이용한 mongoDB 테스트 */
 exports.create = (req, res, next) => { // create이라는 컨트롤러 메소드를 만든다.
     const user = new User(req.body); // User에 정의된스키마에 맞춘 새로운 document 형식을 만들고 request.body를 담는다.
 

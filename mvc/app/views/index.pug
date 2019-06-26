@@ -2,7 +2,17 @@ doctype html
 html
     head
         meta(charset="utf-8")
-        title Welcome to Index Page!
+        title= title
     body
-        h1= title
-        img(src='images/stretched-2560-1440-72270.jpg' alt='logo')
+        if (username)
+            h2= 'Hello, ' + username
+            a(href='/signout') Sign out
+        else 
+            a(href='/signup') Sign up
+            br
+            a(href='/signin') Sign in
+        br
+        br
+        br
+        br
+        img(src='images/stretched-2560-1440-72270.jpg' alt='logo' style='width: 30%')
