@@ -9,6 +9,7 @@ const config = require('./config'); // 내가 작성한 설정 모듈 파일 로
 const session = require('express-session'); // session을 사용하기 위한 모듈 로드
 const passport = require('passport'); // passport를 사용하기 위한 모듈 로드
 const flash = require('connect-flash'); // 임시 메시지를 사용하기 위한 모듈 로드
+const history = require('connect-history-api-fallback'); // SPA 기반 프로그램에서 404를 해결 처리하기 위한 api
 
 module.exports = () => {
     const app = express();
@@ -25,6 +26,10 @@ module.exports = () => {
     app.use(bodyParser.urlencoded({ extended: true })); // FormData 데이터 형식 처리 지원 설정
     app.use(bodyParser.json()); // JSON 데이터 형식 처리 지원 설정
     app.use(methodOverride()); // HTTP 동사 지원 설정
+    app.use(history({ 
+        logger : console.log.bind(console), // 라우팅 로그 설정
+        index : '/index.html' // 404 발생 시 리다이렉트 보낼 템플릿
+    })); // URL을 통한 접속 시 404 우회 설정
 
     app.use(session({
         saveUninitialized : true, // 초기화되지 않은 세션정보도 저장할 것인지 옵션 (default: true)
@@ -32,8 +37,8 @@ module.exports = () => {
         secret : config.sessionSecret // development.js에서 작성한 커스텀 비밀 키 설정
     }));
 
-    app.set('views', './app/views'); // view 디렉토리 설정
-    app.set('view engine', 'pug'); // view Template engine 설정
+    // app.set('views', './app/views'); // view 디렉토리 설정
+    // app.set('view engine', 'pug'); // view Template engine 설정
 
     app.use(flash()); // flash() 사용 설정 - 사용자 세션 영역에 flash라는 영역을 생성한다.
     app.use(passport.initialize()); // passport 초기화

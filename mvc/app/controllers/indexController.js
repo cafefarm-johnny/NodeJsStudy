@@ -1,4 +1,6 @@
 /* 인덱스 컨트롤러 */
+const path = require('path');
+
 exports.index = (req, res) => {
     // if (req.session.lastVisit)
     // {
@@ -10,5 +12,5 @@ exports.index = (req, res) => {
 
     // res.render('index', { title : 'Hello, This is Index Page!' });
 
-    res.render('index', { title : 'Hello, This is Index Page!', username : req.user ? req.user.username : '' });
+    res.sendFile(path.join(__dirname, '../public', 'index.html'));
 }
