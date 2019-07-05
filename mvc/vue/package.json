@@ -15,6 +15,7 @@
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
+    "@storybook/vue": "^4.0.0-alpha.25",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.22.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",

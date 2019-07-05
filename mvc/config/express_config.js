@@ -10,8 +10,26 @@ const session = require('express-session'); // session을 사용하기 위한 �
 const passport = require('passport'); // passport를 사용하기 위한 모듈 로드
 const flash = require('connect-flash'); // 임시 메시지를 사용하기 위한 모듈 로드
 const history = require('connect-history-api-fallback'); // SPA 기반 프로그램에서 404를 해결 처리하기 위한 api
+const cors = require('cors'); // Express의 CORS 모듈 로드
+const multer = require('multer'); // Multipart/form-data를 처리하기 위해 multer 모듈 로드
+
 
 module.exports = () => {
+    const storage = multer.diskStorage({
+        destination : (req, file, cb) => {
+            cb(null, './public/images/'); // 파일 업로드 저장 위치 설정
+        }, 
+        filename : (req, file, cb) => {
+            const originalFileName = file.originalname.split('.');
+            let fileName = 'none';
+            if (originalFileName.length > 0)
+            {
+                fileName = `${originalFileName[0]}-${Date.now()}.${originalFileName[1]}`; 
+            }
+            cb(null, fileName); // 파일 명 설정
+        }
+    });
+    const upload = multer({ storage : storage }); // 파일 업로드 시 저장위치 설정
     const app = express();
 
     if (process.env.NODE_ENV === 'development') 
@@ -43,9 +61,11 @@ module.exports = () => {
     app.use(flash()); // flash() 사용 설정 - 사용자 세션 영역에 flash라는 영역을 생성한다.
     app.use(passport.initialize()); // passport 초기화
     app.use(passport.session()); // passport 세션 생성
+    app.use(cors()); // Express의 CORS 미들웨어를 통한 Cross Origin 허용 설정
 
     require('../app/routes/indexRouter')(app); // indexRouter로 app을 리턴
     require('../app/routes/userRouter')(app); // userRouter로 app을 리턴
+    require('../app/routes/burgerRouter')(app, upload);
 
     // 정적 파일 설정이 라우팅 파일 호출 전에 있을 경우, 
     // express는 HTTP 요청 경로를 찾기 위해 정적 폴더를 먼저 찾게 된다.

@@ -1,18 +1,13 @@
 <template>
     <div>
-        <div class='burger-title-logo'>
-            <img src='../../assets/logo.jpg'>
-        </div>
-
         <div class='burger-add-header'>
             <h1>버거 메뉴 등록</h1>
         </div>
 
         <div class='burger-add-body'>
             <p>
-                <div class='burger-image-box'></div>
                 <label for='burger-image'>버거 사진 : </label>
-                <input type='file' id='burger-image' accept=".jpg, .jpeg, .png, .bmp, .gif">
+                <input v-on:change='fileSelect' type='file' ref='burgerimage' id='burger-image' accept='.jpg, .jpeg, .png, .bmp, .gif'>
             </p>
             <p>
                 <label for='burger-name'>버거 이름 : </label>
@@ -28,15 +23,15 @@
             </p>
             <p>
                 <label for='do-not-sale'>판매 상태</label>
-                <input v-model='saleFlag' type='radio' name='burger-sale-state' id='do-not-sale' checked value='0'> 미판매
-                <input v-model='saleFlag' type='radio' name='burger-sale-state' id='sale' value='1'> 판매
+                <input v-model='saleFlag' type='radio' name='burger-sale-state' id='do-not-sale' checked value='false'> 미판매
+                <input v-model='saleFlag' type='radio' name='burger-sale-state' id='sale' value='true'> 판매
             </p>
         </div>
 
         <div class='burger-add-footer'>
             <p>
-                <input @click="submit" type='button' value='등록'>
-                <input type='button' value='목록으로'>
+                <input @click='submit' type='button' value='등록'>
+                <router-link to="/burger/list">목록으로</router-link>
             </p>
         </div>
     </div>
@@ -48,9 +43,9 @@ export default {
         return {
             burgerImage : '', 
             burgerName : '',
-            burgerPrice :'',
-            burgerQuantity : '', 
-            saleFlag : '0'
+            burgerPrice : 0,
+            burgerQuantity : 0, 
+            saleFlag : false
         }
     },
     methods: {
@@ -60,7 +55,54 @@ export default {
                  window.alert('모든 내용을 입력하고 시도해주세요.');
                  return false;
              }
-             Vue.$http.get();
+
+             const formData = new FormData();
+             formData.append('burgerimage', this.burgerImage);
+             formData.append('burgername', this.burgerName);
+             formData.append('burgerprice', this.burgerPrice);
+             formData.append('burgerquantity', this.burgerQuantity);
+             formData.append('sale', this.saleFlag);
+
+            // * FormData객체는 그 자체를 로깅하면 빈 객체만을 리턴한다.
+            // * FormData를 로깅하려면 FormData.entries()를 이용하여 key : value 쌍을 뽑아야 한다.
+            //  console.log(formData);
+            for (let key of formData.entries())
+            {
+                console.log(`${key}`);
+            }
+
+            // axios로 multipart/form-data POST 요청 보내기
+            // * 3번째 인자 options에 headers 정보로 컨텐츠 타입을 작성해준다.
+             this.$http.post('http://localhost:3000/api/burger/add', formData, {
+                 headers: {
+                     'Content-Type' : 'multipart/form-data'
+                 }
+             }).then((res) => {
+                 const data = res.data;
+                 window.alert(data.msg);
+                 if (data.errorCode === 0)
+                 {
+                     this.$router.replace('/burger/add');
+                 }
+             }).catch((err) => {
+                 window.alert(JSON.stringify(err.message));
+                 console.log(err);
+             });
+
+            // axios로 application/json POST 요청 보내기
+            //  this.$http.post('http://localhost:3000/api/burger/add', {
+            //         burgername : this.burgerName, 
+            //         burgerprice : this.burgerPrice, 
+            //         burgerquantity : this.burgerQuantity, 
+            //         sale : this.saleFlag
+            //     }).then((res) => {
+            //      console.log(res);
+            //  }).catch((err) => {
+            //      console.log(err);
+            //  });
+         },
+         fileSelect() {
+             this.burgerImage = this.$refs.burgerimage.files[0];
          }
     },
 }
