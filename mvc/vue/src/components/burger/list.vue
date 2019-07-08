@@ -33,35 +33,35 @@ export default {
     mounted() {
         this.$http.get('http://localhost:3000/api/burger/list')
             .then((res) => {
-                console.log(res);
-                const data = res.data;
+                console.log(res)
+                const data = res.data
                 if (data.errorCode === 0)
                 {
-                    this.burgerList = data.burgerList;
+                    this.burgerList = data.burgerList
                     // data.burgerList.forEach(burger => {
-                    //     this.burgerImage = burger.burgerImage;
-                    //     this.burgerName = burger.burgerName;
-                    //     this.burgerPrice = burger.burgerPrice;
-                    //     this.burgerQuantity = burger.burgerQuantity;
-                    //     this.saleFlag = burger.sale;
-                    // });
+                    //     this.burgerImage = burger.burgerImage
+                    //     this.burgerName = burger.burgerName
+                    //     this.burgerPrice = burger.burgerPrice
+                    //     this.burgerQuantity = burger.burgerQuantity
+                    //     this.saleFlag = burger.sale
+                    // })
                 }
 
-                console.log(this.burgerList);
+                console.log(this.burgerList)
             }).catch((err) => {
-                window.alert(JSON.stringify(err.message));
-                console.log(err);
-            });
+                window.alert(JSON.stringify(err.message))
+                console.log(err)
+            })
     },
 }
 </script>
 
-<style>
+<style scoped>
 ul {
     list-style-type: none;
     display: inline-flex;
 }
-.burger-image img{
+.burger-image img {
     width: 200px;
 }
 </style>

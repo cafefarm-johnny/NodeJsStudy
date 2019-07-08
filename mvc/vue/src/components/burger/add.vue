@@ -30,9 +30,28 @@
 
         <div class='burger-add-footer'>
             <p>
-                <input @click='submit' type='button' value='등록'>
-                <router-link to="/burger/list">목록으로</router-link>
+                <button @click='submit'>등록</button>
+                <button @click='moveToHome'>홈으로</button>
             </p>
+        </div>
+
+        <div class='burger-state-header'>
+            <h1>버거 메뉴 상태 설정</h1>
+        </div>
+        
+        <div class='burger-state-body'>
+            <ul>
+                <li v-for='(burger) in burgerList' :key='burger.burgername'>
+                    <p class='burger-image'><img v-bind:src='`http://localhost:3000/images/${burger.burgerimage}`'></p>
+                    <p>{{ burger.burgername }}</p>
+                    <p>가격 : {{ burger.burgerprice }}</p>
+                    <p>수량 : {{ burger.burgerquantity }}</p>
+                    <p>상태 : {{ burger.sale === false ? '미 판매' : '판매중' }}</p>
+                    <p>
+                        <button @click='changeState(burger)'>{{ burger.sale === false ? '판매하기' : '판매하지않기' }}</button>
+                    </p>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -41,34 +60,37 @@
 export default {
     data() {
         return {
+            // 버거 메뉴 등록
             burgerImage : '', 
             burgerName : '',
             burgerPrice : 0,
             burgerQuantity : 0, 
-            saleFlag : false
+            saleFlag : false, 
+            // 버거 메뉴 상태 설정
+            burgerList : [], 
         }
     },
     methods: {
          submit() {
              if (this.burgerName.length <= 0 || this.burgerPrice.length <= 0 || this.burgerQuantity.length <= 0)
              {
-                 window.alert('모든 내용을 입력하고 시도해주세요.');
-                 return false;
+                 window.alert('모든 내용을 입력하고 시도해주세요.')
+                 return false
              }
 
-             const formData = new FormData();
-             formData.append('burgerimage', this.burgerImage);
-             formData.append('burgername', this.burgerName);
-             formData.append('burgerprice', this.burgerPrice);
-             formData.append('burgerquantity', this.burgerQuantity);
-             formData.append('sale', this.saleFlag);
+             const formData = new FormData()
+             formData.append('burgerimage', this.burgerImage)
+             formData.append('burgername', this.burgerName)
+             formData.append('burgerprice', this.burgerPrice)
+             formData.append('burgerquantity', this.burgerQuantity)
+             formData.append('sale', this.saleFlag)
 
             // * FormData객체는 그 자체를 로깅하면 빈 객체만을 리턴한다.
             // * FormData를 로깅하려면 FormData.entries()를 이용하여 key : value 쌍을 뽑아야 한다.
-            //  console.log(formData);
+            //  console.log(formData)
             for (let key of formData.entries())
             {
-                console.log(`${key}`);
+                console.log(`${key}`)
             }
 
             // axios로 multipart/form-data POST 요청 보내기
@@ -78,16 +100,16 @@ export default {
                      'Content-Type' : 'multipart/form-data'
                  }
              }).then((res) => {
-                 const data = res.data;
-                 window.alert(data.msg);
+                 const data = res.data
+                 window.alert(data.msg)
                  if (data.errorCode === 0)
                  {
-                     this.$router.replace('/burger/add');
+                     this.$router.replace('/burger/add')
                  }
              }).catch((err) => {
-                 window.alert(JSON.stringify(err.message));
-                 console.log(err);
-             });
+                 window.alert(JSON.stringify(err.message))
+                 console.log(err)
+             })
 
             // axios로 application/json POST 요청 보내기
             //  this.$http.post('http://localhost:3000/api/burger/add', {
@@ -96,18 +118,71 @@ export default {
             //         burgerquantity : this.burgerQuantity, 
             //         sale : this.saleFlag
             //     }).then((res) => {
-            //      console.log(res);
+            //      console.log(res)
             //  }).catch((err) => {
-            //      console.log(err);
-            //  });
+            //      console.log(err)
+            //  })
          },
          fileSelect() {
-             this.burgerImage = this.$refs.burgerimage.files[0];
+             this.burgerImage = this.$refs.burgerimage.files[0]
+         }, 
+         moveToHome() {
+             this.$router.push('/')
+         }, 
+         changeState(burger) {
+             const message = `메뉴 : ${burger.burgername} \n가격 : ${burger.burgerprice} \n수량 : ${burger.burgerquantity} \n상태 : ${burger.sale === false ? '미 판매' : '판매'} \n상태를 ${burger.sale === false ? '"판매"' : '"미판매"'}로 변경하시겠습니까?`
+             const name = burger.burgername
+             const saleFlag = !(burger.sale)
+             if (window.confirm(message))
+             {
+                //  console.log(name)
+                //  console.log(saleFlag)
+                 const burger = {
+                     burgername : name, 
+                     sale : saleFlag
+                 }
+
+                 this.$http.put('http://localhost:3000/api/burger/stateChange', burger)
+                    .then((res) => {
+                        const data = res.data
+                        if (data.errorCode === 0)
+                        {
+                            this.$router.replace('/burger/add')
+                        }
+                        else
+                        {
+                            window.alert(data.msg)
+                        }
+                    }).catch((err) => {
+                        window.alert(err.message)
+                        console.log(err)
+                    })
+             }
          }
+    }, 
+    mounted() {
+        this.$http.get('http://localhost:3000/api/burger/list')
+            .then((res) => {
+                const data = res.data
+
+                if (data.errorCode === 0)
+                {
+                    this.burgerList = data.burgerList
+                }
+            }).catch((err) => {
+                window.alert(err.message)
+                console.log(err)
+            })
     },
 }
 </script>
 
-<style>
-
+<style scoped>
+ul {
+    list-style-type: none;
+    display: inline-flex;
+}
+.burger-image img {
+    width: 200px;
+}
 </style>

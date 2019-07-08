@@ -1,4 +1,4 @@
-const burger = require('../controllers/burgerController');
+const burger = require('../controllers/burgerController')
 
 module.exports = (app, upload) => {
 
@@ -11,12 +11,16 @@ module.exports = (app, upload) => {
      * @param burgerImage 버거 사진 파일 정보
      */
     app.route('/api/burger/add')
-        .post(upload.single('burgerimage'), burger.addMenu); 
+        .post(upload.single('burgerimage'), burger.addMenu)
 
     /** 
      * 버거 메뉴 목록 요청
      * @author Johnny
      */
     app.route('/api/burger/list')
-        .get(burger.list);
+        .get(burger.list)
+    
+    
+    app.route('/api/burger/stateChange')
+        .put(burger.stateChange)
 }

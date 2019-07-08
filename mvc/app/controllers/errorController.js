@@ -1,4 +1,4 @@
-exports.bugerErrorMessage = (err) => { // mongoose error 객체에서 통합된 오류 메시지를 반환하는 비공개 메소드
+exports.burgerErrorMessage = (err) => { // mongoose error 객체에서 통합된 오류 메시지를 반환하는 비공개 메소드
     let message = '';
 
     if (err.code) // mongoDB에서 에러코드를 반환하는 경우
