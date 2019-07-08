@@ -20,7 +20,17 @@ module.exports = (app, upload) => {
     app.route('/api/burger/list')
         .get(burger.list)
     
-    
+    /**
+     * 버거 메뉴 상태 변경 요청
+     * @author Johnny
+     */
     app.route('/api/burger/stateChange')
         .put(burger.stateChange)
+    
+    /**
+     * 버거 메뉴 삭제 요청
+     * @author Johnny
+     */
+    app.route('/api/burger/delete/:burgername')
+        .delete(burger.deleteMenu)
 }

@@ -10,7 +10,7 @@
             </li>
         </ul>
         <div>
-            <router-link to="/">메인화면으로 이동</router-link>
+            <button @click='moveToMain'>메인화면</button>
         </div>
     </div>
 </template>
@@ -52,6 +52,11 @@ export default {
                 window.alert(JSON.stringify(err.message))
                 console.log(err)
             })
+    },
+    methods: {
+        moveToMain() {
+            this.$router.push('/')
+        }
     },
 }
 </script>

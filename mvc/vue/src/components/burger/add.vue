@@ -42,13 +42,16 @@
         <div class='burger-state-body'>
             <ul>
                 <li v-for='(burger) in burgerList' :key='burger.burgername'>
+                    <p>
+                        <button @click='deleteMenu(burger)' class='burger-delete-btn'>메뉴 삭제</button>
+                    </p>
                     <p class='burger-image'><img v-bind:src='`http://localhost:3000/images/${burger.burgerimage}`'></p>
                     <p>{{ burger.burgername }}</p>
                     <p>가격 : {{ burger.burgerprice }}</p>
                     <p>수량 : {{ burger.burgerquantity }}</p>
                     <p>상태 : {{ burger.sale === false ? '미 판매' : '판매중' }}</p>
                     <p>
-                        <button @click='changeState(burger)'>{{ burger.sale === false ? '판매하기' : '판매하지않기' }}</button>
+                        <button @click='changeState(burger)'>{{ burger.sale === false ? 'SALE' : 'DO NOT SALE' }}</button>
                     </p>
                 </li>
             </ul>
@@ -104,7 +107,7 @@ export default {
                  window.alert(data.msg)
                  if (data.errorCode === 0)
                  {
-                     this.$router.replace('/burger/add')
+                     this.$router.go()
                  }
              }).catch((err) => {
                  window.alert(JSON.stringify(err.message))
@@ -131,27 +134,44 @@ export default {
          }, 
          changeState(burger) {
              const message = `메뉴 : ${burger.burgername} \n가격 : ${burger.burgerprice} \n수량 : ${burger.burgerquantity} \n상태 : ${burger.sale === false ? '미 판매' : '판매'} \n상태를 ${burger.sale === false ? '"판매"' : '"미판매"'}로 변경하시겠습니까?`
-             const name = burger.burgername
-             const saleFlag = !(burger.sale)
              if (window.confirm(message))
              {
                 //  console.log(name)
                 //  console.log(saleFlag)
-                 const burger = {
-                     burgername : name, 
-                     sale : saleFlag
+                 const param = {
+                     burgername : burger.burgername, 
+                     sale : !(burger.sale)
                  }
 
-                 this.$http.put('http://localhost:3000/api/burger/stateChange', burger)
+                 this.$http.put('http://localhost:3000/api/burger/stateChange', param)
                     .then((res) => {
                         const data = res.data
                         if (data.errorCode === 0)
                         {
-                            this.$router.replace('/burger/add')
+                            this.$router.go()
                         }
                         else
                         {
                             window.alert(data.msg)
+                        }
+                    }).catch((err) => {
+                        window.alert(err.message)
+                        console.log(err)
+                    })
+             }
+         }, 
+         deleteMenu(burger) {
+             const message = `메뉴 : ${burger.burgername} \n가격 : ${burger.burgerprice} \n수량 : ${burger.burgerquantity} \n상태 : ${burger.sale === false ? '미 판매' : '판매'} \n메뉴를 삭제하시겠습니까?`
+             if (window.confirm(message))
+             {
+                 this.$http.delete(`http://localhost:3000/api/burger/delete/${burger.burgername}`)
+                    .then((res) => {
+                        const data = res.data
+
+                        window.alert(data.msg)
+                        if (data.errorCode === 0)
+                        {
+                            this.$router.go()
                         }
                     }).catch((err) => {
                         window.alert(err.message)
@@ -184,5 +204,13 @@ ul {
 }
 .burger-image img {
     width: 200px;
+}
+.burger-delete-btn {
+    height: 55px;
+    width: 90%;
+    color: white;
+    background-color: #1fc5a4;
+    border-style: none;
+    border-radius: 5px;
 }
 </style>
