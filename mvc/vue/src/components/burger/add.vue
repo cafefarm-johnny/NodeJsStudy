@@ -75,7 +75,10 @@ export default {
     },
     methods: {
          submit() {
-             if (this.burgerName.length <= 0 || this.burgerPrice.length <= 0 || this.burgerQuantity.length <= 0)
+             if (this.burgerImage.length <= 0 || 
+                this.burgerName.length <= 0 || 
+                this.burgerPrice.length <= 0 || 
+                this.burgerQuantity.length <= 0)
              {
                  window.alert('모든 내용을 입력하고 시도해주세요.')
                  return false
