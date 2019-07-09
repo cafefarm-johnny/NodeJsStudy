@@ -19,4 +19,19 @@ module.exports = () => {
     });
 
     require('./passport/strategies/local')();
+
+
+    const Member = mongoose.model('Member')
+    passport.serializeUser((member, done) => {
+        done(null, member.username)
+    })
+
+    passport.deserializeUser((username, done) => {
+        const query = { username : username }
+        Member.findOne(query, '-password -salt', (err, member) => {
+            done(err, member)
+        })
+    })
+
+    require('./passport/strategies/local')()
 }

@@ -149,13 +149,10 @@ export default {
                  this.$http.put('http://localhost:3000/api/burger/stateChange', param)
                     .then((res) => {
                         const data = res.data
+                        window.alert(data.msg)
                         if (data.errorCode === 0)
                         {
                             this.$router.go()
-                        }
-                        else
-                        {
-                            window.alert(data.msg)
                         }
                     }).catch((err) => {
                         window.alert(err.message)
@@ -184,7 +181,7 @@ export default {
          }
     }, 
     mounted() {
-        this.$http.get('http://localhost:3000/api/burger/list')
+        this.$http.get('http://localhost:3000/api/burger/list/all')
             .then((res) => {
                 const data = res.data
 
@@ -212,7 +209,7 @@ ul {
     height: 55px;
     width: 90%;
     color: white;
-    background-color: #1fc5a4;
+    background-color: #f78484;
     border-style: none;
     border-radius: 5px;
 }

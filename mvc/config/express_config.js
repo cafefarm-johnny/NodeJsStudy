@@ -66,6 +66,7 @@ module.exports = () => {
     require('../app/routes/indexRouter')(app); // indexRouter로 app을 리턴
     require('../app/routes/userRouter')(app); // userRouter로 app을 리턴
     require('../app/routes/burgerRouter')(app, upload);
+    require('../app/routes/memberRouter')(app)
 
     // 정적 파일 설정이 라우팅 파일 호출 전에 있을 경우, 
     // express는 HTTP 요청 경로를 찾기 위해 정적 폴더를 먼저 찾게 된다.

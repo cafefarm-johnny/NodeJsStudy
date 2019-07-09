@@ -48,6 +48,46 @@ exports.addMenu = (req, res, next) => {
 
 /**
  * 버거 메뉴 목록 요청
+ * * 미판매 상태의 메뉴도 포함하여 목록을 조회한다.
+ * @author Johnny
+ * @returns { 
+ * errorCode : 처리 결과 코드, 
+ * msg : 처리 결과 메시지, 
+ * burgerList : [ 
+ *      { 
+ *          burgerimage : 버거 이미지 파일 이름
+ *          burgername : 버거 이름, 
+ *          burgerprice : 버거 가격, 
+ *          burgerquantity : 버거 수량, 
+ *          sale : 판매 상태, 
+ *          created : 생성일
+ *      } 
+ *  ] 
+ * }
+ */
+exports.listAll = (req, res, next) => {
+    console.log('burgerController :: listAll :: START ====================')
+    Burger.find((err, burgers) => {
+        if (err)
+        {
+            console.error('burgerController :: listAll :: errorCode : ' + err)
+            resObject.errorCode = 1
+            resObject.msg = errorMessage.burgerErrorMessage(err)
+
+            return res.json(resObject)
+        }
+
+        resObject.errorCode = 0
+        resObject.burgerList = burgers
+
+        res.json(resObject)
+    })
+    console.log('burgerController :: listAll :: END ====================')
+}
+
+/**
+ * 버거 메뉴 목록 요청
+ * * 판매 상태의 메뉴만 조회한다.
  * @author Johnny
  * @returns { 
  * errorCode : 처리 결과 코드, 
@@ -65,10 +105,12 @@ exports.addMenu = (req, res, next) => {
  * }
  */
 exports.list = (req, res, next) => {
-    Burger.find((err, burgers) => {
+    console.log('burgerController :: list :: START ====================')
+    const query = { sale : true }
+    Burger.find(query, (err, burgers) => {
         if (err)
         {
-            console.error('burgerController :: list :: errorCode : ' + error)
+            console.log('burgerController :: list :: errorCode : ', err)
             resObject.errorCode = 1
             resObject.msg = errorMessage.burgerErrorMessage(err)
 
@@ -80,6 +122,7 @@ exports.list = (req, res, next) => {
 
         res.json(resObject)
     })
+    console.log('burgerController :: list :: END ====================')
 }
 
 /**
@@ -109,6 +152,7 @@ exports.stateChange = (req, res, next) => {
 
             console.log('burgerController :: stateChange :: burger : ', burger)
             resObject.errorCode = 0
+            resObject.msg = '상태가 변경되었습니다.'
             res.json(resObject)
         })
     }

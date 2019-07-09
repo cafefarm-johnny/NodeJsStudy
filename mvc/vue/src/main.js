@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'; // 비동기 통신을 위한 axios 모듈 사용
+import { store } from '@/vuex/store' // Vuex
 
 Vue.prototype.$http = axios; // 프로토타입 $http에 axios로 초기화
 
@@ -14,5 +15,6 @@ new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>', 
+  store
 })
