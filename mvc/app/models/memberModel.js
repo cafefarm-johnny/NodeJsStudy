@@ -11,7 +11,7 @@ const memberSchema = new Schema({
     useremail : {
         type : String, 
         trim : true, 
-        match : /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/ // 정규식 표현을 이용하여 특정 문자와 형식에 관련된 검증을 수행한다. (email 패턴의 데이터가 아닐 경우 저장을 중단한다.)
+        match : /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/ // 정규식 표현을 이용하여 특정 문자와 형식에 관련된 검증을 수행한다. (email 패턴의 데이터가 아닐 경우 저장을 중단한다.)
     }, 
     userid : {
         type : String, 
@@ -29,12 +29,12 @@ const memberSchema = new Schema({
         ]
     }, 
     salt : {
-        type : String, 
-        required : true
+        type : String
     }, 
     provider : {
         type : String, 
         required : true,
+        default: 'local'
     },
     providerId : String, 
     providerData : {

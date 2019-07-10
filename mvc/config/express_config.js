@@ -65,7 +65,7 @@ module.exports = () => {
 
     require('../app/routes/indexRouter')(app); // indexRouter로 app을 리턴
     require('../app/routes/userRouter')(app); // userRouter로 app을 리턴
-    require('../app/routes/burgerRouter')(app, upload);
+    require('../app/routes/burgerRouter')(app, upload)
     require('../app/routes/memberRouter')(app)
 
     // 정적 파일 설정이 라우팅 파일 호출 전에 있을 경우, 

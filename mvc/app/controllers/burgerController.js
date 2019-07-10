@@ -17,6 +17,7 @@ const resObject = {
  * @returns { errorCode : 처리 결과 코드, msg : 처리 결과 메시지 }
  */
 exports.addMenu = (req, res, next) => {
+    console.log('burgerController :: addMenu :: START ====================')
     console.log(req.burger)
     const getBurger = {
         burgerimage : req.file.filename, 
@@ -34,7 +35,7 @@ exports.addMenu = (req, res, next) => {
         {
             console.error('burgerController :: addMenu :: errorCode : ' + err)
             resObject.errorCode = 1
-            resObject.msg = errorMessage.burgerErrorMessage(err)
+            resObject.msg = errorMessage.mongoErrorMessage(err, 'burger')
             
             return res.json(resObject)
         }
@@ -44,6 +45,7 @@ exports.addMenu = (req, res, next) => {
         
         res.json(resObject)
     })
+    console.log('burgerController :: addMenu :: END ====================')
 }
 
 /**
@@ -72,7 +74,7 @@ exports.listAll = (req, res, next) => {
         {
             console.error('burgerController :: listAll :: errorCode : ' + err)
             resObject.errorCode = 1
-            resObject.msg = errorMessage.burgerErrorMessage(err)
+            resObject.msg = errorMessage.mongoErrorMessage(err, 'burger')
 
             return res.json(resObject)
         }
@@ -112,7 +114,7 @@ exports.list = (req, res, next) => {
         {
             console.log('burgerController :: list :: errorCode : ', err)
             resObject.errorCode = 1
-            resObject.msg = errorMessage.burgerErrorMessage(err)
+            resObject.msg = errorMessage.mongoErrorMessage(err, 'burger')
 
             return res.json(resObject)
         }
@@ -146,7 +148,7 @@ exports.stateChange = (req, res, next) => {
             {
                 console.error('burgerController :: stateChange :: errorCode : ', err)
                 resObject.errorCode = 1
-                resObject.msg = errorMessage.burgerErrorMessage(err)
+                resObject.msg = errorMessage.mongoErrorMessage(err, 'burger')
                 return res.json(resObject)
             }
 
@@ -179,7 +181,7 @@ exports.deleteMenu = (req, res, next) => {
     if (query.burgername === null || query.burgername === undefined || query.burgername.length <= 0)
     {
         resObject.errorCode = 1
-        resObject.msg = '대상을 선택하고 시도해주세요.'
+        resObject.msg = errorMessage.targetEmptyErrorMessage()
         return res.json(resObject)
     }
 
@@ -188,7 +190,7 @@ exports.deleteMenu = (req, res, next) => {
         {
             console.error('burgerController :: deleteMenu :: errorCode : ', err)
             resObject.errorCode = 2
-            resObject.msg = errorMessage.burgerErrorMessage(err)
+            resObject.msg = errorMessage.mongoErrorMessage(err, 'burger')
             return res.json(resObject)
         }
 

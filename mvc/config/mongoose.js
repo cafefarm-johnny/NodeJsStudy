@@ -2,6 +2,8 @@
 const config = require('./config'), 
     mongoose = require('mongoose')
 
+mongoose.set('useCreateIndex', true) // DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead. 경고 무시 설정
+
 module.exports = () => {
     const db = mongoose.connect(config.db, { useNewUrlParser: true }) // config(development.js)에 정의한 db 커넥션 정보를 불러와 연결한다.
 
