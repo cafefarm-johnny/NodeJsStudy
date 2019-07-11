@@ -79,8 +79,35 @@ exports.signup = (req, res, next) => {
     console.log('memberController :: signup :: END ====================')
 }
 
+/**
+ * 로그인 요청 처리
+ * @author Johnny
+ * @param req.body.userid 사용자 아이디
+ * @param req.body.userpwd 사용자 패스워드
+ */
 exports.signin = (req, res, next) => {
-    const member = new Member(req.body)
+    console.log('memberController :: signin :: START ====================')
+    
+    const query = { 
+        userid: req.body.userid
+    }
+    console.log('memberController :: signin :: query : ', query)
+
+    Member.findOne(query, (err, member) => {
+        if (err)
+        {
+            console.error('memberController :: signin :: errorCode : ', err)
+            sendObj.errorCode = 1
+            sendObj.msg = errorMessage.mongoErrorMessage(err)
+        }
+
+        console.log('memberController :: signin :: member : ', member)
+    })
+
+    // const member = new Member()
+    // member.hashPassword(query.userpwd)
+    
+    console.log('memberController :: signin :: END ====================')
 }
 
 /**

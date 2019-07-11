@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import { signout } from '../../../app/controllers/userController';
+import { signin } from '../../../app/controllers/memberController';
 
 Vue.use(Vuex)
 
@@ -96,6 +97,27 @@ export const store = new Vuex.Store({
                 console.log(err)
             }
         }, 
+        /**
+         * 로그인 비동기 API 통신
+         * @author Johnny 
+         * @param context
+         * @param user 
+         * {
+         *  userid: 사용자 아이디, 
+        *   userpwd: 사용자 비밀번호
+         * }
+         */
+        async signin(context, user) {
+            try 
+            {
+                const res = await axios.post('http://localhost:3000/api/member/signin', user)
+            } 
+            catch (err) 
+            {
+                window.alert(err.message)
+                console.log(err)
+            }
+        },
         /**
          * 로그아웃 비동기 API 통신
          * @author Johnny
