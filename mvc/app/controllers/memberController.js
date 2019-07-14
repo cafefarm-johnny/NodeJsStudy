@@ -1,5 +1,6 @@
 const Member = require('mongoose').model('Member')
 const errorMessage = require('./errorController')
+const crypto = require('crypto')
 
 const resObject = {
     errorCode : -1,
@@ -88,8 +89,10 @@ exports.signup = (req, res, next) => {
 exports.signin = (req, res, next) => {
     console.log('memberController :: signin :: START ====================')
     
+    // query 데이터 검증하기
     const query = { 
-        userid: req.body.userid
+        userid: req.body.userid, 
+        userpwd: req.body.userpwd
     }
     console.log('memberController :: signin :: query : ', query)
 
@@ -97,11 +100,38 @@ exports.signin = (req, res, next) => {
         if (err)
         {
             console.error('memberController :: signin :: errorCode : ', err)
-            sendObj.errorCode = 1
-            sendObj.msg = errorMessage.mongoErrorMessage(err)
+            resObject.errorCode = 1
+            resObject.msg = errorMessage.mongoErrorMessage(err)
         }
 
         console.log('memberController :: signin :: member : ', member)
+        // salt값을 구해서 hashPassword(query.userpwd) 후 해싱된 패스워드와 비교 후 아래 로직 수행
+
+        if (member)
+        {
+            req.login(member, (err) => {
+                if (err)
+                {
+                    return next(err)
+                }
+    
+                console.log('memberController :: signin :: login member : ', member)
+            })
+    
+            resObject.errorCode = 0
+            resObject.user = {
+                _id : member._id, 
+                username : member.username, 
+                useremail : member.useremail, 
+                userid : member.userid
+            }
+            
+            return res.json(resObject)
+        }
+
+        resObject.errorCode = 2
+        resObject.msg = '존재하지 않는 사용자입니다.'
+        res.json(resObject)
     })
 
     // const member = new Member()
@@ -125,4 +155,9 @@ exports.signout = (req, res, next) => {
     resObject.errorCode = 0
     res.json(resObject)
     console.log('memberController :: signout :: END ====================')
+}
+
+
+function hashPassword(password, salt) {
+    return crypto.pbkdf2Sync(password, salt, 10000, 64, null).toString('base64')
 }

@@ -77,6 +77,7 @@ memberSchema.methods.hashPassword = function(userpwd) {
  * @param userpwd 비밀번호 정보
  */
 memberSchema.methods.authenticate = function(userpwd) {
+    console.log('memberModel :: authenticate :: userpwd : ', userpwd)
     return this.userpwd === this.hashPassword(userpwd)
 }
 

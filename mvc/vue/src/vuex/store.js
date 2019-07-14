@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import { signout } from '../../../app/controllers/userController';
-import { signin } from '../../../app/controllers/memberController';
 
 Vue.use(Vuex)
 
@@ -111,6 +109,15 @@ export const store = new Vuex.Store({
             try 
             {
                 const res = await axios.post('http://localhost:3000/api/member/signin', user)
+                const data = res.data
+                if (data.errorCode === 0)
+                {
+                    context.commit('setUser', data.user)
+                }
+                else
+                {
+                    window.alert(data.msg)
+                }
             } 
             catch (err) 
             {
@@ -128,7 +135,6 @@ export const store = new Vuex.Store({
             {
                 const res = await axios.get('http://localhost:3000/api/member/signout')
                 const data = res.data
-                window.alert(data.msg)
                 if (data.errorCode === 0)
                 {
                     context.commit('clearUser')
